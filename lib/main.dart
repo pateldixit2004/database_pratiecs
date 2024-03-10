@@ -226,7 +226,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   TextEditingController controller = TextEditingController();
+  late Future<List<UserModel>> _usersFuture;
 
+  @override
+  void initState() {
+    super.initState();
+    _usersFuture = widget.dbHelper.getUsers();
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -254,14 +260,18 @@ class _MyAppState extends State<MyApp> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  setState(() {});
+                  setState(() {
+                    _usersFuture = widget.dbHelper.getUsers();
+                  });
                 },
                 child: Text('Get Users'),
               ),
               Expanded(
                 child: FutureBuilder<List<UserModel>>(
-                  future: widget.dbHelper.getUsers(),
+                  // future: widget.dbHelper.getUsers(),
+                  future:  _usersFuture,
                   builder: (context, snapshot) {
+
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
